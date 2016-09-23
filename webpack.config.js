@@ -56,12 +56,7 @@ module.exports = {
       },
     ]
   },
-  resolve: {
-    extensions: ['', '.js', '.scss'],
-    alias: {
-      'base64': path.resolve(__dirname, 'src/js/base64.js')
-    }
-  },
+  resolve: {extensions: ['', '.js', '.scss']},
   postcss: [autoprefixer(autoprefixerConfig)],
   devServer: {
     contentBase: path.resolve(__dirname, 'dist'),
