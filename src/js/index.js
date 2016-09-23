@@ -1,94 +1,28 @@
 require('../scss/index');
 var extend = require('xtend');
-var Base64 = require('base64');
+var Base64 = require('./base64');
+var socialSites = require('./sites');
+var device = require('./device');
 
-var hasOwn = Object.prototype.hasOwnProperty;
-var toString = Object.prototype.toString;
 var doc = document;
 var body = doc.body;
-var metaDesc = doc.getElementsByName('description')[0];
-var firstImg = doc.getElementsByTagName('img')[0];
-
-var ua = navigator.userAgent.toLowerCase();
-var isIOS = deviceDetect('iPhone') || deviceDetect('iPad') || deviceDetect('iPod');
-var isAndroid = deviceDetect('Android');
-var isUCBrowser = deviceDetect('UCBrowser');
-var isQQBrowser = deviceDetect('MQQBrowser');
-var isWeixin = deviceDetect('MicroMessenger');
-var qqBrowserVersion = isQQBrowser ? getVersion(ua.split('mqqbrowser/')[1]) : 0;
-var ucBrowserVersion = isUCBrowser ? getVersion(ua.split('ucbrowser/')[1]) : 0;
-var iOSVersion = isIOS ? parseInt(ua.match(/\s*os\s*\d/gi)[0].split(' ')[2], 10) : 0;
 
 var supportNativeShare = false;
-if (
-    (isIOS && ucBrowserVersion >= 10.2) ||
-    (isAndroid && ucBrowserVersion >= 9.7) ||
-    qqBrowserVersion >= 5.4
-  ) {
-    supportNativeShare = true;
-  }
+if ((device.isIOS && device.ucBrowserVersion >= 10.2)
+    || (device.isAndroid && device.ucBrowserVersion >= 9.7)
+    || device.qqBrowserVersion >= 5.4) {
+  supportNativeShare = true;
+}
 
-if (isWeixin) body.insertAdjacentHTML('beforeend', '<div class="soshm-wxsharetip"></div>');
+if (device.isWeixin) {
+  body.insertAdjacentHTML('beforeend', '<div class="soshm-wxsharetip"></div>');
+}
 
 var template =
   '<div class="soshm-item {{site}}" data-site="{{site}}">' +
     '<img class="soshm-item-icon" src="{{icon}}">' +
     '<span class="soshm-item-text">{{name}}</span>' +
   '</div>';
-
-var socialSites = {
-  weixin: {
-    name: '微信好友',
-    icon: require('../img/weixin.png')
-  },
-  weixintimeline: {
-    name: '朋友圈',
-    icon: require('../img/weixin_timeline.png')
-  },
-  qq: {
-    name: 'QQ好友',
-    icon: require('../img/qq.png'),
-    scheme: 'mqqapi://share/to_fri?src_type=web&version=1&file_type=news'
-  },
-  qzone: {
-    name: 'QQ空间',
-    icon: require('../img/qzone.png'),
-    api: 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={{url}}&title={{title}}&pics={{pic}}&desc={{digest}}',
-    scheme: isIOS ?
-    'mqqapi://share/to_fri?file_type=news&src_type=web&version=1&generalpastboard=1&shareType=1&cflag=1&objectlocation=pasteboard&callback_type=scheme&callback_name=QQ41AF4B2A' :
-    'mqqapi://share/to_qzone?src_type=app&version=1&file_type=news&req_type=1'
-  },
-  yixin: {
-    name: '易信',
-    icon: require('../img/yixin.png'),
-    api: 'http://open.yixin.im/share?url={{url}}&title={{title}}&pic={{pic}}&desc={{digest}}'
-  },
-  weibo: {
-    name: '微博',
-    icon: require('../img/weibo.png'),
-    api: 'http://service.weibo.com/share/share.php?url={{url}}&title={{title}}&pic={{pic}}'
-  },
-  tqq: {
-    name: '腾讯微博',
-    icon: require('../img/tqq.png'),
-    api: 'http://share.v.t.qq.com/index.php?c=share&a=index&url={{url}}&title={{title}}&pic={{pic}}'
-  },
-  renren: {
-    name: '人人网',
-    icon: require('../img/renren.png'),
-    api: 'http://widget.renren.com/dialog/share?resourceUrl={{url}}&title={{title}}&pic={{pic}}&description={{digest}}'
-  },
-  douban: {
-    name: '豆瓣',
-    icon: require('../img/douban.png'),
-    api: 'http://douban.com/recommend/?url={{url}}&title={{title}}&image={{pic}}'
-  },
-  tieba: {
-    name: '百度贴吧',
-    icon: require('../img/tieba.png'),
-    api: 'http://tieba.baidu.com/f/commit/share/openShareApi?url={{url}}&title={{title}}&desc={{digest}}'
-  }
-};
 
 // 支持浏览器原生分享的APP
 var nativeShareApps = {
@@ -99,6 +33,8 @@ var nativeShareApps = {
   qzone: ['kQZone', 'Qzone', 3]
 };
 
+var metaDesc = doc.getElementsByName('description')[0];
+var firstImg = doc.getElementsByTagName('img')[0];
 var defaults = {
   title: doc.title,
   url: location.href,
@@ -193,9 +129,9 @@ Share.prototype = {
 
     // 在UC和QQ浏览器里，对支持的应用调用原生分享
     if (supportNativeShare) {
-      if (isUCBrowser) {
+      if (device.isUCBrowser) {
         if (nativeShareApps[site]) {
-          app = isIOS ? nativeShareApps[site][0] : nativeShareApps[site][1];
+          app = device.isIOS ? nativeShareApps[site][0] : nativeShareApps[site][1];
         }
 
         if (app !== undefined) {
@@ -214,7 +150,7 @@ Share.prototype = {
         }
       }
 
-      if (isQQBrowser) {
+      if (device.isQQBrowser) {
         if (nativeShareApps[site]) app = nativeShareApps[site][2];
         if (app !== undefined) {
           if (window.browser) {
@@ -261,7 +197,7 @@ Share.prototype = {
     }
 
     // 在微信里点微信分享，弹出右上角提示
-    if (isWeixin && (site.indexOf('weixin') !== -1)) {
+    if (device.isWeixin && (site.indexOf('weixin') !== -1)) {
       Share.wxShareTip();
       return;
     }
@@ -274,7 +210,7 @@ Share.prototype = {
       window.open(api, '_blank');
     }
   },
-  popIn: function (opts) {
+  popIn: function(opts) {
     if (!this.popElem) {
       var config = extend(defaults, this.opts, opts);
       var html = '<div class="soshm-pop"><div class="soshm-pop-sites">' + this.getSitesHtml(config.sites, 3) + '</div></div>';
@@ -292,7 +228,7 @@ Share.prototype = {
       this.popClass.add('soshm-pop-show');
     }.bind(this), 0);
   },
-  popOut: function () {
+  popOut: function() {
     if (this.popElem) {
       this.popClass.remove('soshm-pop-show');
       this.popClass.add('soshm-pop-hide');
@@ -311,7 +247,7 @@ Share.prototype = {
 
 Share.wxShareTip = function (duration) {
   if (getType(duration) !== 'number') duration = 2000;
-  if (isWeixin) {
+  if (device.isWeixin) {
     var tipElem = doc.querySelector('.soshm-wxsharetip');
     tipElem.classList.add('wxsharetip-show');
     setTimeout(function() {
@@ -324,14 +260,14 @@ function getType(obj) {
   if (obj === null) return 'null';
   if (typeof obj === undefined) return 'undefined';
 
-  return toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+  return Object.prototype.toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
 
 /**
- * [追加对象字面量对象到URL的querystring里]
- * @param  {[string]} url [URL字符串]
- * @param  {[object]} obj [对象字面量]
- * @return {[string]}     [追加querystring后的URL字符串]
+ * 追加对象字面量对象到URL的querystring里
+ * @param  {String} url [URL字符串]
+ * @param  {Object} obj [对象字面量]
+ * @return {String}     [追加querystring后的URL字符串]
  */
 function appendToQuerysting(url, obj) {
   var arr = [];
@@ -342,9 +278,9 @@ function appendToQuerysting(url, obj) {
 }
 
 /**
- * [获取querystring中特定变量的值]
- * @param  {[string]} variable [变量名]
- * @return {[string]}          [变量值]
+ * 获取querystring中特定变量的值
+ * @param  {String} variable [变量名]
+ * @return {String}          [变量值]
  */
 function getQueryVariable(variable) {
   var query = location.search.substring(1);
@@ -359,14 +295,14 @@ function getQueryVariable(variable) {
 }
 
 /**
- * [事件委托]
- * @param  {[Element object]} agent  [被委托的元素]
- * @param  {[string]}   selector     [选择器]
- * @param  {[string]}   type         [事件名称]
- * @param  {Function} fn             [事件处理函数]
+ * 事件委托
+ * @param  {Element} agent   [被委托的元素]
+ * @param  {String} selector [选择器]
+ * @param  {String} event    [事件名称]
+ * @param  {Function} fn     [事件处理函数]
  */
-function delegate(agent, selector, type, fn) {
-  agent.addEventListener(type, function(e) {
+function delegate(agent, selector, event, fn) {
+  agent.addEventListener(event, function(e) {
     var target = e.target;
     var ctarget = e.currentTarget;
     while (target && target !== ctarget) {
@@ -380,10 +316,10 @@ function delegate(agent, selector, type, fn) {
 }
 
 /**
- * [判断html元素是否和给出的选择器匹配]
- * @param  {[Element object]} elem  [html元素]
- * @param  {[string]} selector      [选择器]
- * @return {[boolean]}
+ * 判断html元素是否和给出的选择器匹配
+ * @param  {Element} elem    [html元素]
+ * @param  {String} selector [选择器]
+ * @return {boolean}
  */
 function selectorMatches(elem, selector) {
   var p = Element.prototype;
@@ -398,12 +334,17 @@ function selectorMatches(elem, selector) {
   return f.call(elem, selector);
 }
 
-function loadScript(url, cb) {
+/**
+ * 动态加载外部脚本
+ * @param  {String}   url [脚本地址]
+ * @param  {Function} cb  [脚本完毕回调函数]
+ */
+function loadScript(url, done) {
   var script = doc.createElement('script');
   script.src = url;
   script.onload = onreadystatechange = function() {
     if (!this.readyState || this.readyState === 'load' || this.readyState === 'complete') {
-      cb && cb();
+      done && done();
       script.onload = onreadystatechange
       script.parentNode.removeChild(script);
     }
@@ -411,18 +352,22 @@ function loadScript(url, cb) {
   body.appendChild(script);
 }
 
+/**
+ * 设备检测函数
+ * @param  {String} needle [特定UA标识]
+ * @return {Boolean}
+ */
 function deviceDetect(needle) {
   needle = needle.toLowerCase();
   return ua.indexOf(needle) !== -1;
 }
 
-function getVersion(nece) {
-  var arr = nece.split('.');
-  return parseFloat(arr[0] + '.' + arr[1]);
-}
-
+/**
+ * 通过scheme唤起APP
+ * @param  {String} scheme [app打开协议]
+ */
 function openAppByScheme(scheme) {
-  if (iOSVersion > 8) {
+  if (device.iOSVersion > 8) {
     window.location.href = scheme;
   } else {
     var iframe = doc.createElement('iframe');
@@ -431,7 +376,7 @@ function openAppByScheme(scheme) {
     body.appendChild(iframe);
     setTimeout(function() {
       iframe && iframe.parentNode && iframe.parentNode.removeChild(iframe);
-    }, 5000);
+    }, 2000);
   }
 }
 
