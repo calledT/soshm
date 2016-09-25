@@ -29,35 +29,45 @@ $sites: (
 
   &-item {
     float: left;
-    line-height: 0;
     margin: 5px;
-    text-decoration: none;
     cursor: pointer;
-    border-radius: 50%;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
     &-icon {
+      box-sizing: content-box;
       display: inline-block;
-      text-decoration: none;
-    }
-
-    &-icon {
       width: 26px;
       height: 26px;
       padding: 5px;
-      text-align: center;
+      margin: 0;
+      vertical-align: middle;
+      border-radius: 50%;
+
+      img {
+        vertical-align: top;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+      }
     }
 
     &-text {
       display: none;
+      font-size: 14px;
+      color: #666;
     }
 
     @each $name, $color in $sites {
       &.#{$name} {
+        .soshm-item-icon {
           background: $color;
+        }
 
         &:hover {
-          background: darken($color, 10%);
+          .soshm-item-icon {
+            background: darken($color, 10%);
+          }
         }
       }
     }
@@ -87,14 +97,16 @@ $sites: (
     opacity: 0;
     z-index: 9999;
     background: rgba(#000, 0.65);
+    transition-property: opacity;
+    transition-timing-function: ease-in;
 
     &-show {
       opacity: 1;
-      transition: opacity 800ms ease-in;
+      transition-duration: 0.6s;
 
-      @for $i from 1 through 3 {
+      @for $i from 1 through 4 {
         .group#{$i} {
-          $duration: ($i - 1) * 600ms + 1200ms;
+          $duration: ($i - 1) * 500ms + 1200ms;
           animation: soshtrans $duration 1 ease;
         }
       }
@@ -102,12 +114,12 @@ $sites: (
 
     &-hide {
       opacity: 0;
-      transition: opacity 800ms ease-in;
+      transition-duration: 1s;
 
-      @for $i from 1 through 3 {
+      @for $i from 1 through 4 {
         .group#{$i} {
-          $delay: ($i - 1) * 300ms;
-          animation: soshtrans2 700ms 1 cubic-bezier(0.68, -0.55, 0.265, 1.55) $delay;
+          $delay: ($i - 1) * 200ms;
+          animation: soshtrans2 500ms 1 cubic-bezier(0.68, -0.55, 0.265, 1.55) $delay forwards;
         }
       }
     }

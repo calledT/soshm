@@ -1,7 +1,7 @@
 require('../scss/index');
 var extend = require('xtend');
 var Base64 = require('./base64');
-var socialSites = require('./sites');
+var sitesObj = require('./sites');
 var device = require('./device');
 
 var doc = document;
@@ -15,12 +15,14 @@ if ((device.isIOS && device.ucBrowserVersion >= 10.2)
 }
 
 if (device.isWeixin) {
-  body.insertAdjacentHTML('beforeend', '<div class="soshm-wxsharetip"></div>');
+  body.insertAdjacentHTML('beforeend', '<div class="soshm-weixin-sharetip"></div>');
 }
 
-var template =
+var templateStr =
   '<div class="soshm-item {{site}}" data-site="{{site}}">' +
-    '<img class="soshm-item-icon" src="{{icon}}">' +
+    '<span class="soshm-item-icon">' +
+      '<img src="{{icon}}" alt="{{site}}">' +
+    '</span>' +
     '<span class="soshm-item-text">{{name}}</span>' +
   '</div>';
 
@@ -67,7 +69,7 @@ Share.prototype = {
       if (typeof history.replaceState === 'function') {
         var url = location.href.replace(new RegExp('[&?]__soshmbridge='+site, 'gi'), '');
         history.replaceState(null, doc.title, url);
-        this.shareTo(site, extend(defaults, opts));
+        this._shareTo(site, extend(defaults, opts));
       }
     }
 
@@ -81,7 +83,7 @@ Share.prototype = {
 
         var config = extend(defaults, opts, dataset);
 
-        var sitesHtml = this.getSitesHtml(config.sites);
+        var sitesHtml = getSitesHtml(config.sites);
 
         elem.insertAdjacentHTML('beforeend', sitesHtml);
 
@@ -91,41 +93,40 @@ Share.prototype = {
       }
     }
   },
-  getSitesHtml: function(sites, groupsize) {
-    var i = 0;
-    var html = '';
-    var length = sites.length;
-    var groupsize = getType(groupsize) === 'number' && groupsize !== 0 ? groupsize : 0;
-
-    for (; i < length; i++) {
-      if (groupsize && i % groupsize === 0) {
-        html += '<div class="soshm-group group' + ((i / groupsize) + 1) + '">';
-      }
-
-      html += this.parseTemplate(sites[i]);
-
-      if (groupsize && (i % groupsize === groupsize - 1 || i === length - 1)) {
-        html += '</div>';
-      };
+  popIn: function(opts) {
+    if (!this.popElem) {
+      var config = extend(defaults, this.opts, opts);
+      var html = '<div class="soshm-pop"><div class="soshm-pop-sites">' +
+                  getSitesHtml(config.sites, 3) +
+                  '</div></div>';
+      body.insertAdjacentHTML('beforeend', html);
+      this.popElem = doc.querySelector('.soshm-pop');
+      this.popClass = this.popElem.classList;
+      this._handlerClick(this.popElem, config);
+      this.popElem.onclick = function() {
+        this.popOut();
+      }.bind(this);
     }
-
-    return html;
+    this.popClass.remove('soshm-pop-hide');
+    this.popElem.style.display = 'block';
+    setTimeout(function() {
+      this.popClass.add('soshm-pop-show');
+    }.bind(this), 0);
   },
-  parseTemplate: function(site) {
-    if (socialSites[site]) {
-      return template.replace(/\{\{site\}\}/g, site)
-        .replace(/\{\{icon\}\}/g, socialSites[site].icon)
-        .replace(/\{\{name\}\}/g, socialSites[site].name);
-    } else {
-      console.warn('site [' + site + '] not exist.');
-      return '';
+  popOut: function() {
+    if (this.popElem) {
+      this.popClass.remove('soshm-pop-show');
+      this.popClass.add('soshm-pop-hide');
+      setTimeout(function() {
+        this.popElem.style.display = 'none';
+      }.bind(this), 1100);
     }
   },
-  shareTo: function(site, data) {
+  _shareTo: function(site, data) {
     var _this = this;
     var app;
     var shareInfo;
-    var api = socialSites[site].api;
+    var api = sitesObj[site].api;
 
     // 在UC和QQ浏览器里，对支持的应用调用原生分享
     if (supportNativeShare) {
@@ -167,7 +168,7 @@ Share.prototype = {
             browser.app && browser.app.share(shareInfo);
           } else {
             loadScript('//jsapi.qq.com/get?api=app.share', function() {
-              _this.shareTo(site, data);
+              _this._shareTo(site, data);
             });
           }
           return;
@@ -177,7 +178,7 @@ Share.prototype = {
 
     // 在普通浏览器里，使用URL Scheme唤起QQ客户端进行分享
     if (site === 'qzone' || site === 'qq') {
-      var scheme = appendToQuerysting(socialSites[site].scheme, {
+      var scheme = appendToQuerysting(sitesObj[site].scheme, {
         share_id: '1101685683',
         url: Base64.encode(data.url),
         title: Base64.encode(data.title),
@@ -210,37 +211,10 @@ Share.prototype = {
       window.open(api, '_blank');
     }
   },
-  popIn: function(opts) {
-    if (!this.popElem) {
-      var config = extend(defaults, this.opts, opts);
-      var html = '<div class="soshm-pop"><div class="soshm-pop-sites">' + this.getSitesHtml(config.sites, 3) + '</div></div>';
-      body.insertAdjacentHTML('beforeend', html);
-      this.popElem = doc.querySelector('.soshm-pop');
-      this.popClass = this.popElem.classList;
-      this._handlerClick(this.popElem, config);
-      this.popElem.onclick = function() {
-        this.popOut();
-      }.bind(this);
-    }
-    this.popClass.remove('soshm-pop-hide');
-    this.popElem.style.display = 'block';
-    setTimeout(function() {
-      this.popClass.add('soshm-pop-show');
-    }.bind(this), 0);
-  },
-  popOut: function() {
-    if (this.popElem) {
-      this.popClass.remove('soshm-pop-show');
-      this.popClass.add('soshm-pop-hide');
-      setTimeout(function() {
-        this.popElem.style.display = 'none';
-      }.bind(this), 800);
-    }
-  },
   _handlerClick: function(agent, data) {
     var _this = this;
     delegate(agent, '.soshm-item', 'click', function() {
-      _this.shareTo(this.dataset.site, data);
+      _this._shareTo(this.dataset.site, data);
     });
   }
 };
@@ -256,11 +230,50 @@ Share.wxShareTip = function (duration) {
   }
 };
 
+/**
+ * 获取分享站点的html字符串
+ * @param  {Array} sites      [需要展示的站点数组]
+ * @param  {Number} groupsize [分组的大小，不传表示不分组]
+ * @return {String}           [html字符串]
+ */
+function getSitesHtml(sites, groupsize) {
+  var html = '';
+  var groupsize = getType(groupsize) === 'number' && groupsize !== 0 ? groupsize : 0;
+  for (var i = 0, length = sites.length; i < length; i++) {
+    if (groupsize && i % groupsize === 0) {
+      html += '<div class="soshm-group group' + ((i / groupsize) + 1) + '">';
+    }
+
+    var key = sites[i];
+    var siteObj = sitesObj[key];
+    if (siteObj) {
+      html += templateStr.
+        replace(/\{\{site\}\}/g, key)
+        .replace(/\{\{icon\}\}/g, siteObj.icon)
+        .replace(/\{\{name\}\}/g, siteObj.name);
+    } else {
+      console.warn('site [' + key + '] not exist.');
+    }
+
+    if (groupsize && (i % groupsize === groupsize - 1 || i === length - 1)) {
+      html += '</div>';
+    }
+  }
+  return html;
+}
+
+/**
+ * 获取传入参数类型
+ * @param  {String,Number,Array,Boolaen,Function,Object,Null,Undefined} obj
+ * @return {String}     []
+ */
 function getType(obj) {
   if (obj === null) return 'null';
   if (typeof obj === undefined) return 'undefined';
 
-  return Object.prototype.toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+  return Object.prototype.toString.call(obj)
+          .match(/\s([a-zA-Z]+)/)[1]
+          .toLowerCase();
 }
 
 /**
@@ -337,29 +350,21 @@ function selectorMatches(elem, selector) {
 /**
  * 动态加载外部脚本
  * @param  {String}   url [脚本地址]
- * @param  {Function} cb  [脚本完毕回调函数]
+ * @param  {Function} done  [脚本完毕回调函数]
  */
 function loadScript(url, done) {
   var script = doc.createElement('script');
   script.src = url;
   script.onload = onreadystatechange = function() {
-    if (!this.readyState || this.readyState === 'load' || this.readyState === 'complete') {
+    if (!this.readyState ||
+        this.readyState === 'load' ||
+        this.readyState === 'complete') {
       done && done();
       script.onload = onreadystatechange
       script.parentNode.removeChild(script);
     }
   };
   body.appendChild(script);
-}
-
-/**
- * 设备检测函数
- * @param  {String} needle [特定UA标识]
- * @return {Boolean}
- */
-function deviceDetect(needle) {
-  needle = needle.toLowerCase();
-  return ua.indexOf(needle) !== -1;
 }
 
 /**
