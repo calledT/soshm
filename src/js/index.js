@@ -76,20 +76,24 @@ Share.prototype = {
     if (this.length) {
       for(i=0; i<this.length; i++) {
         var elem = this.elems[i];
+        var status = elem.getAttribute('sosh-status');
+        if (status !== 'initialized') {
+          var dataset = extend(elem.dataset);
 
-        var dataset = extend(elem.dataset);
+          if (dataset.sites) dataset.sites = dataset.sites.split(',');
 
-        if (dataset.sites) dataset.sites = dataset.sites.split(',');
+          var config = extend(defaults, opts, dataset);
 
-        var config = extend(defaults, opts, dataset);
+          var sitesHtml = getSitesHtml(config.sites);
 
-        var sitesHtml = getSitesHtml(config.sites);
+          elem.insertAdjacentHTML('beforeend', sitesHtml);
 
-        elem.insertAdjacentHTML('beforeend', sitesHtml);
+          elem.setAttribute('sosh-status', 'initialized');
 
-        elem.classList.add('soshm');
+          elem.classList.add('soshm');
 
-        this._handlerClick(elem, config);
+          this._handlerClick(elem, config);
+        }
       }
     }
   },
