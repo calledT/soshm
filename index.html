@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>sosh_一个走社会主义道路，适合中国国情的社交分享组件</title>
+  <meta name="description" content="一个走社会主义道路，适合中国国情的社交分享组件">
+  <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <div id="header_wrap" class="outer">
+    <header class="inner">
+      <a id="forkme_banner" href="https://github.com/calledT/soshm">View on GitHub</a>
+      <h1 id="project_title">sosh</h1>
+      <h2 id="project_tagline">一个走社会主义道路，适合中国国情的社交分享组件</h2>
+      <div id="downloads">
+        <a class="zip_download_link" href="https://github.com/calledT/soshm/zipball/master">Download this project as a .zip file</a>
+        <a class="tar_download_link" href="https://github.com/calledT/soshm/tarball/master">Download this project as a tar.gz file</a>
+      </div>
+    </header>
+  </div>
+  <!-- MAIN CONTENT -->
+  <div id="main_content_wrap" class="outer">
+    <div id="main_content" class="inner">
+      <article class="markdown-body"><h1>
+        <a id="user-content-social-share" class="anchor" href="#social-share" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Social Share</h1>
+
+        <p><a href="http://calledt.com/sosh">PC版请查看</a></p>
+
+        <h2>
+        <a id="user-content-特性" class="anchor" href="#%E7%89%B9%E6%80%A7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>特性</h2>
+
+        <ul>
+        <li>仅需调用<code>sosh.js</code>，无其他库依赖</li>
+        <li>支持IE7以上浏览器</li>
+        <li>支持微信二维码扫码分享</li>
+        <li>支持使用<code>dataset</code>配置</li>
+        <li>支持AMD、CommonJS和浏览器全局变量（使用UMD）</li>
+        <li>图标及样式打包在js里，无需额外请求</li>
+        </ul>
+
+        <h2>
+        <a id="user-content-安装" class="anchor" href="#%E5%AE%89%E8%A3%85" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>安装</h2>
+
+        <p>通过npm进行安装</p>
+
+        <div class="highlight highlight-source-shell"><pre>npm install -S sosh</pre></div>
+
+        <p>或者把脚本引进你的页面里</p>
+
+        <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>sosh.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+        <h2>
+        <a id="user-content-使用" class="anchor" href="#%E4%BD%BF%E7%94%A8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用</h2>
+
+        <h3>
+        <a id="user-content-参数" class="anchor" href="#%E5%8F%82%E6%95%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>参数</h3>
+
+        <ol>
+        <li>第一个参数为字符串类型，代表选择器。支持ID和单一类名选择器两种形式，如：<code>#id</code>、<code>.classname</code>。</li>
+        <li>第二个参数为对象字面量，配置分享的相关内容。</li>
+        </ol>
+
+        <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">"</span>soshid<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">div</span>&gt;
+        <span class="pl-s1">&lt;<span class="pl-ent">script</span>&gt;</span>
+        <span class="pl-s1">  <span class="pl-en">sosh</span>(<span class="pl-s"><span class="pl-pds">'</span>#soshid<span class="pl-pds">'</span></span>, {</span>
+        <span class="pl-s1">    <span class="pl-c">// 分享的链接，默认使用location.href</span></span>
+        <span class="pl-s1">    url<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
+        <span class="pl-s1">    <span class="pl-c">// 分享的标题，默认使用document.title</span></span>
+        <span class="pl-s1">    title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
+        <span class="pl-s1">    <span class="pl-c">// 分享的摘要，默认使用&lt;meta name="description" content=""&gt;content的值</span></span>
+        <span class="pl-s1">    digest<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
+        <span class="pl-s1">    <span class="pl-c">// 分享的图片，默认获取本页面第一个img元素的src</span></span>
+        <span class="pl-s1">    pic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
+        <span class="pl-s1">    <span class="pl-c">// 选择要显示的分享站点，顺序同sites数组顺序，</span></span>
+        <span class="pl-s1">    <span class="pl-c">// 支持设置的站点有weixin,yixin,weibo,qzone,tqq,douban,renren,tieba</span></span>
+        <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin,<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>]</span>
+        <span class="pl-s1">  })</span>
+        <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
+        <div id="soshid"></div>
+        <h3>
+        <a id="user-content-使用dataset进行配置" class="anchor" href="#%E4%BD%BF%E7%94%A8dataset%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用dataset进行配置</h3>
+
+        <p>除了能在构造函数初始化的时候进行参数配置外，也可以用<code>[data-*]</code>的方式进行配置，并且优先级高于函数参数。</p>
+
+        <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>datasetconfig<span class="pl-pds">"</span></span> <span class="pl-e">data-title</span>=<span class="pl-s"><span class="pl-pds">"</span>分享标题<span class="pl-pds">"</span></span> <span class="pl-e">data-sites</span>=<span class="pl-s"><span class="pl-pds">"</span>yixin,weibo,weixin,tqq,qzone<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">div</span>&gt;
+        <span class="pl-s1">&lt;<span class="pl-ent">script</span>&gt;</span>
+        <span class="pl-s1">  <span class="pl-en">sosh</span>(<span class="pl-s"><span class="pl-pds">'</span>.datasetconfig<span class="pl-pds">'</span></span>, {</span>
+        <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin,<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>]</span>
+        <span class="pl-s1">  })</span>
+        <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
+        <div class="datasetconfig" data-title="sosh分享组件" data-sites="yixin,weibo,weixin,tqq,qzone" data-pic="http://ww3.sinaimg.cn/square/68250c36gw1f851irz1gbj202o03vdfo.jpg"></div>
+        <h2>
+        <a id="user-content-license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+        <p>MIT © calledT</p>
+      </article>
+    </div>
+  </div>
+  <!-- FOOTER  -->
+  <div id="footer_wrap" class="outer">
+    <footer class="inner">
+      <p class="copyright">Sosh maintained by <a href="https://github.com/calledT">calledT</a></p>
+      <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+  </div>
+  <script src="javascripts/sosh.min.js"></script>
+  <script>
+    sosh('#soshid', {
+      pic: 'http://ww3.sinaimg.cn/square/68250c36gw1f851irz1gbj202o03vdfo.jpg',
+      sites: ['weixin', 'weibo', 'yixin', 'qzone', 'tqq', 'douban', 'renren', 'tieba'] //
+    });
+    sosh('.datasetconfig', {
+      sites: ['weixin,', 'weibo', 'yixin', 'qzone']
+    });
+  </script>
+</body>
+</html>
+
