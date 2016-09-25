@@ -141,7 +141,7 @@ $sites: (
     }
   }
 
-  &-wxsharetip {
+  &-weixin-sharetip {
     position: fixed;
     overflow: hidden;
     width: 100%;
@@ -155,7 +155,7 @@ $sites: (
     visibility: hidden;
     transition: all 600ms ease-out;
 
-    &.wxsharetip-show {
+    &.weixin-sharetip-show {
       z-index: 9999;
       opacity: 1;
       visibility: visible;
