@@ -26,45 +26,63 @@ npm install -S soshm
 
 ## 使用
 
-### 使用构造函数初始化
-构造函数第一个参数代表`selector`，支持`querySelectorAll` 所支持的参数类型，第二个参数配置分享相关的内容。
+### 参数
+1. 第一个参数为字符串类型，代表选择器。支持`querySelectorAll` 所支持的参数类型。。
+2. 第二个参数为对象字面量，配置分享的相关内容。
 
 ```html
 <div class="soshm"></div>
 <script src="dist/soshm.min.js"></script>
 <script>
-  var soshm = new Soshm('.soshm', {
+  soshm('#share', {
+    // 分享的链接，默认使用location.href
+    url: '',
+    // 分享的标题，默认使用document.title
+    title: '',
+    // 分享的摘要，默认使用<meta name="description" content="">content的值
+    digest: '',
+    // 分享的图片，默认获取本页面第一个img元素的src
+    pic: '',
     // 默认显示的网站为以下六个个,支持设置的网站有
     // weixin,weixintimeline,qq,qzone,yixin,weibo,tqq,renren,douban,tieba
     sites: ['weixin', 'weixintimeline', 'yixin', 'weibo', 'qq', 'qzone']
   });
-
-  // 初始化过后可以调用popIn函数来弹出分享窗口，一般用来做更多分享的用途
-  // 在第一个调用这个函数的时候可以传入配置参数，不传则使用初始化时
-  // 所使用的配置，参数仅在第一个调用的时候生效。
-  soshm.popIn({
-    sites: ['weixin', 'weixintimeline', 'yixin', 'weibo', 'qq', 'qzone', 'tqq', 'renren', 'tieba']
-  })
 </script>
 ```
 
 ### 使用dataset进行配置
 
-除了能在构造函数初始化的时候进行参数配置外，也可以用`[data-*]`的方式进行配置，并且优先级高于函数参数。
+除了函数参数配置外，也可以用`[data-*]`的方式进行配置。
+`TIP:` 函数参数配置优先级高于dataset配置
 
 ```html
 <div class="datasetconfig" data-title="分享标题" data-sites="yixin,weibo,weixin,tqq,qzone"></div>
 <script>
-  new Soshm('.datasetconfig', {
+  soshm('.datasetconfig', {
     sites: ['weixin,', 'weibo', 'yixin', 'qzone']
   })
 </script>
 ```
 
-### 原生分享
+### 弹窗形式
+`soshm.popIn`函数已弹窗的形式展示分享的站点，接收一个表示配置分享内容的对象字面量参数。
+
+```html
+<button id="shareBtn"></button>
+<script>
+  document.getElementById('shareBtn').addEventListener('click', function() {
+    soshm.popIn({
+      title: '弹窗分享',
+      sites: ['weixin', 'weixintimeline', 'weibo', 'yixin', 'qzone', 'tqq', 'qq']
+    });
+  }, false);
+</script>
+```
+
+## 原生分享
 在UC浏览器和QQ浏览器里支持唤起微信、QQ、微博客户端进行分享。其他浏览器里支持唤起QQ客户端的分享，微博分享使用webapi进行，而微信分享需要借用QQ浏览器进行，如果用户没有安装，则点击无反应。
 
-在微信里点击微信分享会在右上角浮出分享操作的提示，也可以手动调用`Soshm.wxShareTip()` 函数，此函数仅在微信里生效。
+在微信里点击微信分享会在右上角浮出分享操作的提示，也可以手动调用`soshm.weixinSharetip()` 函数，此函数仅在微信里生效。
 
 ## License
 
