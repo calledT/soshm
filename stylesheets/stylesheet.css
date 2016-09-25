@@ -261,6 +261,13 @@ Full-Width Styles
   display: inline-block;vertical-align: middle;
 }
 
+#sharebtn {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: .5em 2em;
+  background-color: transparent;
+}
+
 .outer {
   width: 100%;
 }
