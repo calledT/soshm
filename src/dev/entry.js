@@ -1,7 +1,14 @@
-var Soshm = require('../js/index');
+var soshm = require('../js/index');
 
-var share1 = new Soshm('#share', {sites: ['weixin', 'weibo', 'yixin', 'qzone', 'tqq']});
+soshm('#share1', {sites: ['weixin', 'weibo', 'yixin', 'qzone', 'tqq']});
 
-document.getElementById('btn1').addEventListener('click', function() {
-  share1.popIn({sites: ['weixin', 'weixintimeline', 'weibo', 'yixin', 'qzone', 'tqq', 'qq', 'renren', 'douban']});
+soshm('#share2', {sites: ['weixin', 'weibo', 'yixin', 'qzone', 'tqq', 'qq']});
+
+soshm('.share');
+
+document.getElementById('btn').addEventListener('click', function() {
+  soshm.popIn({
+    title: '弹窗分享',
+    sites: ['weixin', 'weixintimeline', 'weibo', 'yixin', 'qzone', 'tqq', 'qq']
+  });
 }, false);
