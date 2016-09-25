@@ -29,7 +29,7 @@ if (DEBUG) {
 } else {
   entry = {soshm: './js/index.js'};
 
-  output.library = 'Soshm';
+  output.library = 'soshm';
   output.libraryTarget = 'umd';
   output.umdNamedDefine = true;
 }
