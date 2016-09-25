@@ -74,11 +74,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  body.insertAdjacentHTML('beforeend', '<div class="soshm-weixin-sharetip"></div>');
 	}
 	
-	var template =
+	var templateStr =
 	  '<div class="soshm-item {{site}}" data-site="{{site}}">' +
 	    '<span class="soshm-item-icon">' +
 	      '<img src="{{icon}}" alt="{{site}}">' +
-	    '</span>'
+	    '</span>' +
 	    '<span class="soshm-item-text">{{name}}</span>' +
 	  '</div>';
 	
@@ -125,7 +125,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (typeof history.replaceState === 'function') {
 	        var url = location.href.replace(new RegExp('[&?]__soshmbridge='+site, 'gi'), '');
 	        history.replaceState(null, doc.title, url);
-	        this.shareTo(site, extend(defaults, opts));
+	        this._shareTo(site, extend(defaults, opts));
 	      }
 	    }
 	
@@ -139,7 +139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var config = extend(defaults, opts, dataset);
 	
-	        var sitesHtml = this.getSitesHtml(config.sites);
+	        var sitesHtml = getSitesHtml(config.sites);
 	
 	        elem.insertAdjacentHTML('beforeend', sitesHtml);
 	
@@ -149,37 +149,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	  },
-	  getSitesHtml: function(sites, groupsize) {
-	    var i = 0;
-	    var html = '';
-	    var length = sites.length;
-	    var groupsize = getType(groupsize) === 'number' && groupsize !== 0 ? groupsize : 0;
-	
-	    for (; i < length; i++) {
-	      if (groupsize && i % groupsize === 0) {
-	        html += '<div class="soshm-group group' + ((i / groupsize) + 1) + '">';
-	      }
-	
-	      html += this.parseTemplate(sites[i]);
-	
-	      if (groupsize && (i % groupsize === groupsize - 1 || i === length - 1)) {
-	        html += '</div>';
-	      };
+	  popIn: function(opts) {
+	    if (!this.popElem) {
+	      var config = extend(defaults, this.opts, opts);
+	      var html = '<div class="soshm-pop"><div class="soshm-pop-sites">' +
+	                  getSitesHtml(config.sites, 3) +
+	                  '</div></div>';
+	      body.insertAdjacentHTML('beforeend', html);
+	      this.popElem = doc.querySelector('.soshm-pop');
+	      this.popClass = this.popElem.classList;
+	      this._handlerClick(this.popElem, config);
+	      this.popElem.onclick = function() {
+	        this.popOut();
+	      }.bind(this);
 	    }
-	
-	    return html;
+	    this.popClass.remove('soshm-pop-hide');
+	    this.popElem.style.display = 'block';
+	    setTimeout(function() {
+	      this.popClass.add('soshm-pop-show');
+	    }.bind(this), 0);
 	  },
-	  parseTemplate: function(site) {
-	    if (sitesObj[site]) {
-	      return template.replace(/\{\{site\}\}/g, site)
-	        .replace(/\{\{icon\}\}/g, sitesObj[site].icon)
-	        .replace(/\{\{name\}\}/g, sitesObj[site].name);
-	    } else {
-	      console.warn('site [' + site + '] not exist.');
-	      return '';
+	  popOut: function() {
+	    if (this.popElem) {
+	      this.popClass.remove('soshm-pop-show');
+	      this.popClass.add('soshm-pop-hide');
+	      setTimeout(function() {
+	        this.popElem.style.display = 'none';
+	      }.bind(this), 1100);
 	    }
 	  },
-	  shareTo: function(site, data) {
+	  _shareTo: function(site, data) {
 	    var _this = this;
 	    var app;
 	    var shareInfo;
@@ -225,7 +224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            browser.app && browser.app.share(shareInfo);
 	          } else {
 	            loadScript('//jsapi.qq.com/get?api=app.share', function() {
-	              _this.shareTo(site, data);
+	              _this._shareTo(site, data);
 	            });
 	          }
 	          return;
@@ -268,37 +267,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      window.open(api, '_blank');
 	    }
 	  },
-	  popIn: function(opts) {
-	    if (!this.popElem) {
-	      var config = extend(defaults, this.opts, opts);
-	      var html = '<div class="soshm-pop"><div class="soshm-pop-sites">' + this.getSitesHtml(config.sites, 3) + '</div></div>';
-	      body.insertAdjacentHTML('beforeend', html);
-	      this.popElem = doc.querySelector('.soshm-pop');
-	      this.popClass = this.popElem.classList;
-	      this._handlerClick(this.popElem, config);
-	      this.popElem.onclick = function() {
-	        this.popOut();
-	      }.bind(this);
-	    }
-	    this.popClass.remove('soshm-pop-hide');
-	    this.popElem.style.display = 'block';
-	    setTimeout(function() {
-	      this.popClass.add('soshm-pop-show');
-	    }.bind(this), 0);
-	  },
-	  popOut: function() {
-	    if (this.popElem) {
-	      this.popClass.remove('soshm-pop-show');
-	      this.popClass.add('soshm-pop-hide');
-	      setTimeout(function() {
-	        this.popElem.style.display = 'none';
-	      }.bind(this), 800);
-	    }
-	  },
 	  _handlerClick: function(agent, data) {
 	    var _this = this;
 	    delegate(agent, '.soshm-item', 'click', function() {
-	      _this.shareTo(this.dataset.site, data);
+	      _this._shareTo(this.dataset.site, data);
 	    });
 	  }
 	};
@@ -314,11 +286,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	};
 	
+	/**
+	 * 获取分享站点的html字符串
+	 * @param  {Array} sites      [需要展示的站点数组]
+	 * @param  {Number} groupsize [分组的大小，不传表示不分组]
+	 * @return {String}           [html字符串]
+	 */
+	function getSitesHtml(sites, groupsize) {
+	  var html = '';
+	  var groupsize = getType(groupsize) === 'number' && groupsize !== 0 ? groupsize : 0;
+	  for (var i = 0, length = sites.length; i < length; i++) {
+	    if (groupsize && i % groupsize === 0) {
+	      html += '<div class="soshm-group group' + ((i / groupsize) + 1) + '">';
+	    }
+	
+	    var key = sites[i];
+	    var siteObj = sitesObj[key];
+	    if (siteObj) {
+	      html += templateStr.
+	        replace(/\{\{site\}\}/g, key)
+	        .replace(/\{\{icon\}\}/g, siteObj.icon)
+	        .replace(/\{\{name\}\}/g, siteObj.name);
+	    } else {
+	      console.warn('site [' + key + '] not exist.');
+	    }
+	
+	    if (groupsize && (i % groupsize === groupsize - 1 || i === length - 1)) {
+	      html += '</div>';
+	    }
+	  }
+	  return html;
+	}
+	
+	/**
+	 * 获取传入参数类型
+	 * @param  {String,Number,Array,Boolaen,Function,Object,Null,Undefined} obj
+	 * @return {String}     []
+	 */
 	function getType(obj) {
 	  if (obj === null) return 'null';
 	  if (typeof obj === undefined) return 'undefined';
 	
-	  return Object.prototype.toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+	  return Object.prototype.toString.call(obj)
+	          .match(/\s([a-zA-Z]+)/)[1]
+	          .toLowerCase();
 	}
 	
 	/**
@@ -395,29 +406,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * 动态加载外部脚本
 	 * @param  {String}   url [脚本地址]
-	 * @param  {Function} cb  [脚本完毕回调函数]
+	 * @param  {Function} done  [脚本完毕回调函数]
 	 */
 	function loadScript(url, done) {
 	  var script = doc.createElement('script');
 	  script.src = url;
 	  script.onload = onreadystatechange = function() {
-	    if (!this.readyState || this.readyState === 'load' || this.readyState === 'complete') {
+	    if (!this.readyState ||
+	        this.readyState === 'load' ||
+	        this.readyState === 'complete') {
 	      done && done();
 	      script.onload = onreadystatechange
 	      script.parentNode.removeChild(script);
 	    }
 	  };
 	  body.appendChild(script);
-	}
-	
-	/**
-	 * 设备检测函数
-	 * @param  {String} needle [特定UA标识]
-	 * @return {Boolean}
-	 */
-	function deviceDetect(needle) {
-	  needle = needle.toLowerCase();
-	  return ua.indexOf(needle) !== -1;
 	}
 	
 	/**
@@ -476,7 +479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	// module
-	exports.push([module.id, ".soshm{text-align:center}.soshm:after,.soshm:before{content:\" \";display:table}.soshm:after{clear:both}.soshm-item{float:left;margin:5px;cursor:pointer;-webkit-tap-highlight-color:transparent}.soshm-item-icon{box-sizing:content-box;display:inline-block;width:26px;height:26px;padding:5px;margin:0;vertical-align:middle;border-radius:50%}.soshm-item-icon img{vertical-align:top;padding:0;margin:0;width:100%;height:100%}.soshm-item-text{display:none;font-size:14px;color:#666}.soshm-item.weixin .soshm-item-icon{background:#49b233}.soshm-item.weixin:hover .soshm-item-icon{background:#398a28}.soshm-item.yixin .soshm-item-icon{background:#23cfaf}.soshm-item.yixin:hover .soshm-item-icon{background:#1ca38a}.soshm-item.weibo .soshm-item-icon{background:#f04e59}.soshm-item.weibo:hover .soshm-item-icon{background:#ec1f2d}.soshm-item.qzone .soshm-item-icon{background:#fdbe3d}.soshm-item.qzone:hover .soshm-item-icon{background:#fcad0b}.soshm-item.renren .soshm-item-icon{background:#1f7fc9}.soshm-item.renren:hover .soshm-item-icon{background:#18639d}.soshm-item.tieba .soshm-item-icon{background:#5b95f0}.soshm-item.tieba:hover .soshm-item-icon{background:#2c77ec}.soshm-item.douban .soshm-item-icon{background:#228a31}.soshm-item.douban:hover .soshm-item-icon{background:#186122}.soshm-item.tqq .soshm-item-icon{background:#97cbe1}.soshm-item.tqq:hover .soshm-item-icon{background:#6fb7d6}.soshm-item.qq .soshm-item-icon{background:#4081e1}.soshm-item.qq:hover .soshm-item-icon{background:#2066ce}.soshm-item.weixintimeline .soshm-item-icon{background:#1cb526}.soshm-item.weixintimeline:hover .soshm-item-icon{background:#15891d}.soshm-group{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;padding:15px 20px}.soshm-group .soshm-item{display:block;float:none;margin:0}.soshm-pop{display:none;position:fixed;top:0;left:0;right:0;bottom:0;height:100%;width:100%;opacity:0;z-index:9999;background:rgba(0,0,0,.65)}.soshm-pop-show{opacity:1;-webkit-transition:opacity .8s ease-in;transition:opacity .8s ease-in}.soshm-pop-show .group1{-webkit-animation:soshtrans 1.2s 1 ease;animation:soshtrans 1.2s 1 ease}.soshm-pop-show .group2{-webkit-animation:soshtrans 1.8s 1 ease;animation:soshtrans 1.8s 1 ease}.soshm-pop-show .group3{-webkit-animation:soshtrans 2.4s 1 ease;animation:soshtrans 2.4s 1 ease}.soshm-pop-hide{opacity:0;-webkit-transition:opacity .8s ease-in;transition:opacity .8s ease-in}.soshm-pop-hide .group1{-webkit-animation:soshtrans2 .7s 1 cubic-bezier(.68,-.55,.265,1.55) 0ms;animation:soshtrans2 .7s 1 cubic-bezier(.68,-.55,.265,1.55) 0ms}.soshm-pop-hide .group2{-webkit-animation:soshtrans2 .7s 1 cubic-bezier(.68,-.55,.265,1.55) .3s;animation:soshtrans2 .7s 1 cubic-bezier(.68,-.55,.265,1.55) .3s}.soshm-pop-hide .group3{-webkit-animation:soshtrans2 .7s 1 cubic-bezier(.68,-.55,.265,1.55) .6s;animation:soshtrans2 .7s 1 cubic-bezier(.68,-.55,.265,1.55) .6s}.soshm-pop-sites{position:absolute;top:50%;left:0;width:100%;-webkit-transform:translateY(-50%);transform:translateY(-50%)}.soshm-pop .soshm-item-icon{width:42px;height:42px;padding:10px}.soshm-wxsharetip{position:fixed;overflow:hidden;width:100%;height:100%;top:0;left:0;background:rgba(0,0,0,.6) url(" + __webpack_require__(4) + ") no-repeat right 0;background-size:50% auto;z-index:-1;opacity:0;visibility:hidden;-webkit-transition:all .6s ease-out;transition:all .6s ease-out}.soshm-wxsharetip.wxsharetip-show{z-index:9999;opacity:1;visibility:visible}@-webkit-keyframes soshtrans{0%{-webkit-transform:translate3d(0,1136px,0);transform:translate3d(0,1136px,0)}50%{-webkit-transform:translateZ(0);transform:translateZ(0)}60%{-webkit-transform:translateZ(0);transform:translateZ(0)}to{-webkit-transform:translateZ(0);transform:translateZ(0)}}@keyframes soshtrans{0%{-webkit-transform:translate3d(0,1136px,0);transform:translate3d(0,1136px,0)}50%{-webkit-transform:translateZ(0);transform:translateZ(0)}60%{-webkit-transform:translateZ(0);transform:translateZ(0)}to{-webkit-transform:translateZ(0);transform:translateZ(0)}}@-webkit-keyframes soshtrans2{0%{opacity:1;-webkit-transform:translateZ(0);transform:translateZ(0)}to{opacity:0;-webkit-transform:translate3d(0,500%,0);transform:translate3d(0,500%,0)}}@keyframes soshtrans2{0%{opacity:1;-webkit-transform:translateZ(0);transform:translateZ(0)}to{opacity:0;-webkit-transform:translate3d(0,500%,0);transform:translate3d(0,500%,0)}}", ""]);
+	exports.push([module.id, ".soshm{text-align:center}.soshm:after,.soshm:before{content:\" \";display:table}.soshm:after{clear:both}.soshm-item{float:left;margin:5px;cursor:pointer;-webkit-tap-highlight-color:transparent}.soshm-item-icon{box-sizing:content-box;display:inline-block;width:26px;height:26px;padding:5px;margin:0;vertical-align:middle;border-radius:50%}.soshm-item-icon img{vertical-align:top;padding:0;margin:0;width:100%;height:100%}.soshm-item-text{display:none;font-size:14px;color:#666}.soshm-item.weixin .soshm-item-icon{background:#49b233}.soshm-item.weixin:hover .soshm-item-icon{background:#398a28}.soshm-item.yixin .soshm-item-icon{background:#23cfaf}.soshm-item.yixin:hover .soshm-item-icon{background:#1ca38a}.soshm-item.weibo .soshm-item-icon{background:#f04e59}.soshm-item.weibo:hover .soshm-item-icon{background:#ec1f2d}.soshm-item.qzone .soshm-item-icon{background:#fdbe3d}.soshm-item.qzone:hover .soshm-item-icon{background:#fcad0b}.soshm-item.renren .soshm-item-icon{background:#1f7fc9}.soshm-item.renren:hover .soshm-item-icon{background:#18639d}.soshm-item.tieba .soshm-item-icon{background:#5b95f0}.soshm-item.tieba:hover .soshm-item-icon{background:#2c77ec}.soshm-item.douban .soshm-item-icon{background:#228a31}.soshm-item.douban:hover .soshm-item-icon{background:#186122}.soshm-item.tqq .soshm-item-icon{background:#97cbe1}.soshm-item.tqq:hover .soshm-item-icon{background:#6fb7d6}.soshm-item.qq .soshm-item-icon{background:#4081e1}.soshm-item.qq:hover .soshm-item-icon{background:#2066ce}.soshm-item.weixintimeline .soshm-item-icon{background:#1cb526}.soshm-item.weixintimeline:hover .soshm-item-icon{background:#15891d}.soshm-group{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;padding:15px 20px}.soshm-group .soshm-item{display:block;float:none;margin:0}.soshm-pop{display:none;position:fixed;top:0;left:0;right:0;bottom:0;height:100%;width:100%;opacity:0;z-index:9999;background:rgba(0,0,0,.65);-webkit-transition-property:opacity;transition-property:opacity;-webkit-transition-timing-function:ease-in;transition-timing-function:ease-in}.soshm-pop-show{opacity:1;-webkit-transition-duration:.6s;transition-duration:.6s}.soshm-pop-show .group1{-webkit-animation:soshtrans 1.2s 1 ease;animation:soshtrans 1.2s 1 ease}.soshm-pop-show .group2{-webkit-animation:soshtrans 1.7s 1 ease;animation:soshtrans 1.7s 1 ease}.soshm-pop-show .group3{-webkit-animation:soshtrans 2.2s 1 ease;animation:soshtrans 2.2s 1 ease}.soshm-pop-show .group4{-webkit-animation:soshtrans 2.7s 1 ease;animation:soshtrans 2.7s 1 ease}.soshm-pop-hide{opacity:0;-webkit-transition-duration:1s;transition-duration:1s}.soshm-pop-hide .group1{-webkit-animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) 0ms forwards;animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) 0ms forwards}.soshm-pop-hide .group2{-webkit-animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) .2s forwards;animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) .2s forwards}.soshm-pop-hide .group3{-webkit-animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) .4s forwards;animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) .4s forwards}.soshm-pop-hide .group4{-webkit-animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) .6s forwards;animation:soshtrans2 .5s 1 cubic-bezier(.68,-.55,.265,1.55) .6s forwards}.soshm-pop-sites{position:absolute;top:50%;left:0;width:100%;-webkit-transform:translateY(-50%);transform:translateY(-50%)}.soshm-pop .soshm-item-icon{width:42px;height:42px;padding:10px}.soshm-wxsharetip{position:fixed;overflow:hidden;width:100%;height:100%;top:0;left:0;background:rgba(0,0,0,.6) url(" + __webpack_require__(4) + ") no-repeat right 0;background-size:50% auto;z-index:-1;opacity:0;visibility:hidden;-webkit-transition:all .6s ease-out;transition:all .6s ease-out}.soshm-wxsharetip.wxsharetip-show{z-index:9999;opacity:1;visibility:visible}@-webkit-keyframes soshtrans{0%{-webkit-transform:translate3d(0,1136px,0);transform:translate3d(0,1136px,0)}50%{-webkit-transform:translateZ(0);transform:translateZ(0)}60%{-webkit-transform:translateZ(0);transform:translateZ(0)}to{-webkit-transform:translateZ(0);transform:translateZ(0)}}@keyframes soshtrans{0%{-webkit-transform:translate3d(0,1136px,0);transform:translate3d(0,1136px,0)}50%{-webkit-transform:translateZ(0);transform:translateZ(0)}60%{-webkit-transform:translateZ(0);transform:translateZ(0)}to{-webkit-transform:translateZ(0);transform:translateZ(0)}}@-webkit-keyframes soshtrans2{0%{opacity:1;-webkit-transform:translateZ(0);transform:translateZ(0)}to{opacity:0;-webkit-transform:translate3d(0,500%,0);transform:translate3d(0,500%,0)}}@keyframes soshtrans2{0%{opacity:1;-webkit-transform:translateZ(0);transform:translateZ(0)}to{opacity:0;-webkit-transform:translate3d(0,500%,0);transform:translate3d(0,500%,0)}}", ""]);
 	
 	// exports
 
