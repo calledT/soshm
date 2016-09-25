@@ -24,18 +24,17 @@
   <!-- MAIN CONTENT -->
   <div id="main_content_wrap" class="outer">
     <div id="main_content" class="inner">
-      <article class="markdown-body"><h1>
-        <a id="user-content-social-share" class="anchor" href="#social-share" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Social Share</h1>
+      <article class="markdown-body">
+        <h1><a id="user-content-social-share" class="anchor" href="#social-share" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Social Share</h1>
 
-        <p><a href="http://calledt.com/sosh">PC版请查看</a></p>
+        <p><a href="https://github.com/calledT/sosh">PC版请查看</a></p>
 
         <h2>
         <a id="user-content-特性" class="anchor" href="#%E7%89%B9%E6%80%A7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>特性</h2>
 
         <ul>
-        <li>仅需调用<code>sosh.js</code>，无其他库依赖</li>
-        <li>支持IE7以上浏览器</li>
-        <li>支持微信二维码扫码分享</li>
+        <li>仅需调用<code>soshm.js</code>，无其他库依赖</li>
+        <li>支持<code>微信</code>,<code>QQ</code>,<code>微博</code>的原生应用分享(借用UC浏览器或者QQ浏览器或者URL scheme进行)</li>
         <li>支持使用<code>dataset</code>配置</li>
         <li>支持AMD、CommonJS和浏览器全局变量（使用UMD）</li>
         <li>图标及样式打包在js里，无需额外请求</li>
@@ -46,40 +45,37 @@
 
         <p>通过npm进行安装</p>
 
-        <div class="highlight highlight-source-shell"><pre>npm install -S sosh</pre></div>
+        <div class="highlight highlight-source-shell"><pre>npm install -S soshm</pre></div>
 
         <p>或者把脚本引进你的页面里</p>
 
-        <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>sosh.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+        <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>soshm.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
         <h2>
         <a id="user-content-使用" class="anchor" href="#%E4%BD%BF%E7%94%A8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用</h2>
 
         <h3>
-        <a id="user-content-参数" class="anchor" href="#%E5%8F%82%E6%95%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>参数</h3>
+        <a id="user-content-使用构造函数初始化" class="anchor" href="#%E4%BD%BF%E7%94%A8%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%88%9D%E5%A7%8B%E5%8C%96" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用构造函数初始化</h3>
 
-        <ol>
-        <li>第一个参数为字符串类型，代表选择器。支持ID和单一类名选择器两种形式，如：<code>#id</code>、<code>.classname</code>。</li>
-        <li>第二个参数为对象字面量，配置分享的相关内容。</li>
-        </ol>
+        <p>构造函数第一个参数代表<code>selector</code>，支持<code>querySelectorAll</code> 所支持的参数类型，第二个参数配置分享相关的内容。</p>
 
-        <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">id</span>=<span class="pl-s"><span class="pl-pds">"</span>soshid<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">div</span>&gt;
+        <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>soshm<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">div</span>&gt;
+        &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>dist/soshm.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
         <span class="pl-s1">&lt;<span class="pl-ent">script</span>&gt;</span>
-        <span class="pl-s1">  <span class="pl-en">sosh</span>(<span class="pl-s"><span class="pl-pds">'</span>#soshid<span class="pl-pds">'</span></span>, {</span>
-        <span class="pl-s1">    <span class="pl-c">// 分享的链接，默认使用location.href</span></span>
-        <span class="pl-s1">    url<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
-        <span class="pl-s1">    <span class="pl-c">// 分享的标题，默认使用document.title</span></span>
-        <span class="pl-s1">    title<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
-        <span class="pl-s1">    <span class="pl-c">// 分享的摘要，默认使用&lt;meta name="description" content=""&gt;content的值</span></span>
-        <span class="pl-s1">    digest<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
-        <span class="pl-s1">    <span class="pl-c">// 分享的图片，默认获取本页面第一个img元素的src</span></span>
-        <span class="pl-s1">    pic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>,</span>
-        <span class="pl-s1">    <span class="pl-c">// 选择要显示的分享站点，顺序同sites数组顺序，</span></span>
-        <span class="pl-s1">    <span class="pl-c">// 支持设置的站点有weixin,yixin,weibo,qzone,tqq,douban,renren,tieba</span></span>
-        <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin,<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>]</span>
+        <span class="pl-s1">  <span class="pl-k">var</span> soshm <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Soshm</span>(<span class="pl-s"><span class="pl-pds">'</span>.soshm<span class="pl-pds">'</span></span>, {</span>
+        <span class="pl-s1">    <span class="pl-c">// 默认显示的网站为以下六个个,支持设置的网站有</span></span>
+        <span class="pl-s1">    <span class="pl-c">// weixin,weixintimeline,qq,qzone,yixin,weibo,tqq,renren,douban,tieba</span></span>
+        <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weixintimeline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qq<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>]</span>
+        <span class="pl-s1">  });</span>
+        <span class="pl-s1"></span>
+        <span class="pl-s1">  <span class="pl-c">// 初始化过后可以调用popIn函数来弹出分享窗口，一般用来做更多分享的用途</span></span>
+        <span class="pl-s1">  <span class="pl-c">// 在第一个调用这个函数的时候可以传入配置参数，不传则使用初始化时</span></span>
+        <span class="pl-s1">  <span class="pl-c">// 所使用的配置，参数仅在第一个调用的时候生效。</span></span>
+        <span class="pl-s1">  <span class="pl-smi">soshm</span>.<span class="pl-en">popIn</span>({</span>
+        <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weixintimeline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qq<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>tqq<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>renren<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>tieba<span class="pl-pds">'</span></span>]</span>
         <span class="pl-s1">  })</span>
         <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
-        <div id="soshid"></div>
+
         <h3>
         <a id="user-content-使用dataset进行配置" class="anchor" href="#%E4%BD%BF%E7%94%A8dataset%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用dataset进行配置</h3>
 
@@ -87,11 +83,18 @@
 
         <div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">div</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>datasetconfig<span class="pl-pds">"</span></span> <span class="pl-e">data-title</span>=<span class="pl-s"><span class="pl-pds">"</span>分享标题<span class="pl-pds">"</span></span> <span class="pl-e">data-sites</span>=<span class="pl-s"><span class="pl-pds">"</span>yixin,weibo,weixin,tqq,qzone<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">div</span>&gt;
         <span class="pl-s1">&lt;<span class="pl-ent">script</span>&gt;</span>
-        <span class="pl-s1">  <span class="pl-en">sosh</span>(<span class="pl-s"><span class="pl-pds">'</span>.datasetconfig<span class="pl-pds">'</span></span>, {</span>
+        <span class="pl-s1">  <span class="pl-k">new</span> <span class="pl-en">Soshm</span>(<span class="pl-s"><span class="pl-pds">'</span>.datasetconfig<span class="pl-pds">'</span></span>, {</span>
         <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin,<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>]</span>
         <span class="pl-s1">  })</span>
         <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
-        <div class="datasetconfig" data-title="sosh分享组件" data-sites="yixin,weibo,weixin,tqq,qzone" data-pic="http://ww3.sinaimg.cn/square/68250c36gw1f851irz1gbj202o03vdfo.jpg"></div>
+
+        <h3>
+        <a id="user-content-原生分享" class="anchor" href="#%E5%8E%9F%E7%94%9F%E5%88%86%E4%BA%AB" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>原生分享</h3>
+
+        <p>在UC浏览器和QQ浏览器里支持唤起微信、QQ、微博客户端进行分享。其他浏览器里支持唤起QQ客户端的分享，微博分享使用webapi进行，而微信分享需要借用QQ浏览器进行，如果用户没有安装，则点击无反应。</p>
+
+        <p>在微信里点击微信分享会在右上角浮出分享操作的提示，也可以手动调用<code>Soshm.wxShareTip()</code> 函数，此函数仅在微信里生效。</p>
+
         <h2>
         <a id="user-content-license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
 
@@ -106,13 +109,13 @@
       <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
     </footer>
   </div>
-  <script src="javascripts/sosh.min.js"></script>
+  <script src="javascripts/soshm.min.js"></script>
   <script>
-    sosh('#soshid', {
+    new Soshm('#soshid', {
       pic: 'http://ww3.sinaimg.cn/square/68250c36gw1f851irz1gbj202o03vdfo.jpg',
       sites: ['weixin', 'weibo', 'yixin', 'qzone', 'tqq', 'douban', 'renren', 'tieba'] //
     });
-    sosh('.datasetconfig', {
+    new Soshm('.datasetconfig', {
       sites: ['weixin,', 'weibo', 'yixin', 'qzone']
     });
   </script>
