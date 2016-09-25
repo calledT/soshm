@@ -43,6 +43,7 @@
     "webpack-dev-server": "^1.16.1"
   },
   "dependencies": {
+    "delegate": "^3.0.2",
     "xtend": "^4.0.1"
   }
 }
