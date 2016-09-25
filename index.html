@@ -75,7 +75,7 @@
         <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weixintimeline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qq<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>tqq<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>renren<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>tieba<span class="pl-pds">'</span></span>]</span>
         <span class="pl-s1">  })</span>
         <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
-        <div id="soshid"></div>
+        <div id="soshid"></div><button id="soshmore1" class="soshmore">更多</button>
         <h3>
         <a id="user-content-使用dataset进行配置" class="anchor" href="#%E4%BD%BF%E7%94%A8dataset%E8%BF%9B%E8%A1%8C%E9%85%8D%E7%BD%AE" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用dataset进行配置</h3>
 
@@ -87,7 +87,7 @@
         <span class="pl-s1">    sites<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>weixin,<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>weibo<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>yixin<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>qzone<span class="pl-pds">'</span></span>]</span>
         <span class="pl-s1">  })</span>
         <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre></div>
-        <div class="datasetconfig" data-title="sosh分享组件" data-sites="yixin,weibo,weixin,tqq,qzone" data-pic="http://ww3.sinaimg.cn/square/68250c36gw1f851irz1gbj202o03vdfo.jpg"></div>
+        <div class="datasetconfig" data-title="sosh分享组件" data-sites="yixin,weibo,weixin,tqq,qzone" data-pic="http://ww3.sinaimg.cn/square/68250c36gw1f851irz1gbj202o03vdfo.jpg"></div><button id="soshmore2" class="soshmore">更多</button>
         <h3>
         <a id="user-content-原生分享" class="anchor" href="#%E5%8E%9F%E7%94%9F%E5%88%86%E4%BA%AB" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>原生分享</h3>
 
@@ -111,13 +111,22 @@
   </div>
   <script src="javascripts/soshm.min.js"></script>
   <script>
-    new Soshm('#soshid', {
+    var soshm1 = new Soshm('#soshid', {
       pic: 'http://ww3.sinaimg.cn/square/68250c36gw1f851irz1gbj202o03vdfo.jpg',
       sites: ['weixin', 'weibo', 'yixin', 'qzone', 'tqq'] //
     });
-    new Soshm('.datasetconfig', {
+
+    document.getElementById('soshmore1').addEventListener('click', function() {
+      soshm1.popIn({sites: ['weixin', 'weixintimeline', 'weibo', 'yixin', 'qzone', 'tqq', 'qq', 'renren', 'douban']});
+    }, false);
+
+    var soshm2 = new Soshm('.datasetconfig', {
       sites: ['weixin,', 'weibo', 'yixin', 'qzone']
     });
+
+    document.getElementById('soshmore2').addEventListener('click', function() {
+      soshm2.popIn({sites: ['weixin', 'weixintimeline', 'weibo', 'yixin', 'qzone', 'tqq']});
+    }, false);
   </script>
 </body>
 </html>
