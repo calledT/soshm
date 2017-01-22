@@ -1,51 +1,22 @@
 var path = require('path');
 var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
 var autoprefixerConfig = require('./autoprefixer.config');
 
-var DEBUG = process.env.NODE_ENV !== 'production';
-
-var plugins = [];
-var entry;
-var output = {
-  path: path.resolve(__dirname, 'dist'),
-  filename: '[name].js',
-};
-
-if (DEBUG) {
-  plugins.push(new webpack.HotModuleReplacementPlugin({multiStep: true}));
-
-  plugins.push(new HtmlWebpackPlugin({
-    title: 'Development',
-    template: path.resolve(__dirname, 'src/dev/index.html')
-  }));
-
-  entry = [
-    './dev/entry.js',
-    'webpack-dev-server/client?http://localhost:8080/',
-    'webpack/hot/dev-server'
-  ];
-} else {
-  entry = {soshm: './js/index.js'};
-
-  output.library = 'soshm';
-  output.libraryTarget = 'umd';
-  output.umdNamedDefine = true;
-}
+var libraryName = 'soshm';
+var outputFile = libraryName + '.js';
 
 module.exports = {
-  devtool: 'source-map',
-  context: path.resolve(__dirname, 'src'),
-  entry: entry,
-  output: output,
-  plugins: plugins,
+  entry: path.resolve(__dirname, 'src/js/index.js'),
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: outputFile,
+    library: libraryName,
+    libraryTarget: 'umd',
+    umdNamedDefine: true
+  },
   module: {
     loaders: [
-      {
-        test: /\.html$/,
-        loader: 'html'
-      },
       {
         test: /\.scss$/,
         loader: 'style!css?minimize!postcss!sass'
@@ -56,16 +27,11 @@ module.exports = {
       },
     ]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    })
+  ],
   resolve: {extensions: ['', '.js', '.scss']},
-  postcss: [autoprefixer(autoprefixerConfig)],
-  devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
-    hot: true,
-    inline: true,
-    noInfo: false,
-    stats: {
-      colors: true,
-      chunks: false
-    }
-  }
+  postcss: [autoprefixer(autoprefixerConfig)]
 }
