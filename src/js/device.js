@@ -20,13 +20,15 @@ function getVersion(nece) {
   return parseFloat(arr[0] + '.' + arr[1]);
 }
 
-module.exports = {
+var device = {
   isIOS: deviceDetect('iPhone') || deviceDetect('iPad') || deviceDetect('iPod'),
   isAndroid: deviceDetect('Android'),
   isUCBrowser: deviceDetect('UCBrowser'),
   isQQBrowser: deviceDetect('MQQBrowser'),
-  isWeixin: deviceDetect('MicroMessenger'),
-  qqBrowserVersion: this.isQQBrowser ? getVersion(ua.split('mqqbrowser/')[1]) : 0,
-  ucBrowserVersion: this.isUCBrowser ? getVersion(ua.split('ucbrowser/')[1]) : 0,
-  iOSVersion: this.isIOS ? parseInt(ua.match(/\s*os\s*\d/gi)[0].split(' ')[2], 10) : 0
+  isWeixin: deviceDetect('MicroMessenger')
 };
+
+device.qqBrowserVersion = device.isQQBrowser ? getVersion(ua.split('mqqbrowser/')[1]) : 0;
+device.ucBrowserVersion = device.isUCBrowser ? getVersion(ua.split('mqqbrowser/')[1]) : 0;
+
+module.exports = device;

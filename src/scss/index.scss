@@ -26,12 +26,12 @@ $sites: (
   @include clearfix;
 
   text-align: center;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
   &-item {
     float: left;
     margin: 5px;
     cursor: pointer;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
     &-icon {
       box-sizing: content-box;

@@ -1,7 +1,7 @@
 require('../scss/index');
 var delegate = require('delegate');
 var extend = require('xtend');
-var Base64 = require('./base64');
+var base64 = require('./base64');
 var sitesObj = require('./sites');
 var device = require('./device');
 
@@ -25,12 +25,12 @@ var nativeShareApps = {
 };
 
 var templateStr =
-  '<div class="soshm-item {{site}}" data-site="{{site}}">' +
-    '<span class="soshm-item-icon">' +
-      '<img src="{{icon}}" alt="{{site}}">' +
-    '</span>' +
-    '<span class="soshm-item-text">{{name}}</span>' +
-  '</div>';
+'<div class="soshm-item {{site}}" data-site="{{site}}">' +
+  '<span class="soshm-item-icon">' +
+    '<img src="{{icon}}" alt="{{site}}">' +
+  '</span>' +
+  '<span class="soshm-item-text">{{name}}</span>' +
+'</div>';
 
 var metaDesc = doc.getElementsByName('description')[0];
 var firstImg = doc.getElementsByTagName('img')[0];
@@ -75,7 +75,6 @@ function soshm(selector, options) {
     history.replaceState(null, doc.title, url);
     shareTo(site, extend(defaults, opts));
   }
-
 }
 
 soshm.popIn = function(options) {
@@ -113,7 +112,7 @@ soshm.popIn = function(options) {
   }, false);
 };
 
-soshm.weixinSharetip = function (duration) {
+soshm.weixinSharetip = function(duration) {
   if (getType(duration) !== 'number') duration = 2000;
   if (device.isWeixin) {
     var elem = doc.querySelector('.soshm-weixin-sharetip');
@@ -186,11 +185,11 @@ function shareTo(site, data) {
   if (site === 'qzone' || site === 'qq') {
     var scheme = appendToQuerysting(sitesObj[site].scheme, {
       share_id: '1101685683',
-      url: Base64.encode(data.url),
-      title: Base64.encode(data.title),
-      description: Base64.encode(data.digest),
-      previewimageUrl: Base64.encode(data.pic), //For IOS
-      image_url: Base64.encode(data.pic) //For Android
+      url: base64.encode(data.url),
+      title: base64.encode(data.title),
+      description: base64.encode(data.digest),
+      previewimageUrl: base64.encode(data.pic), //For IOS
+      image_url: base64.encode(data.pic) //For Android
     });
     openAppByScheme(scheme);
     return;
@@ -320,7 +319,7 @@ function loadScript(url, done) {
  * @param  {String} scheme [app打开协议]
  */
 function openAppByScheme(scheme) {
-  if (device.iOSVersion > 8) {
+  if (device.isIOS) {
     window.location.href = scheme;
   } else {
     var iframe = doc.createElement('iframe');
