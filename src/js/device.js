@@ -29,6 +29,6 @@ var device = {
 };
 
 device.qqBrowserVersion = device.isQQBrowser ? getVersion(ua.split('mqqbrowser/')[1]) : 0;
-device.ucBrowserVersion = device.isUCBrowser ? getVersion(ua.split('mqqbrowser/')[1]) : 0;
+device.ucBrowserVersion = device.isUCBrowser ? getVersion(ua.split('ucbrowser/')[1]) : 0;
 
 module.exports = device;
