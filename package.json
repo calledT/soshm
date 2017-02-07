@@ -13,8 +13,7 @@
   "scripts": {
     "package": "webpack",
     "minify": "uglifyjs --mangle --compress -o ./dist/soshm.min.js ./dist/soshm.js",
-    "build": "npm run package && npm run minify",
-    "prepublish": "npm run build"
+    "build": "npm run package && npm run minify"
   },
   "keywords": [
     "share",
