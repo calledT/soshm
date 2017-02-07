@@ -1,7 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
-var autoprefixerConfig = require('./autoprefixer.config');
 
 var libraryName = 'soshm';
 var outputFile = libraryName + '.js';
@@ -28,10 +27,12 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     })
   ],
   resolve: {extensions: ['', '.js', '.scss']},
-  postcss: [autoprefixer(autoprefixerConfig)]
+  postcss: [autoprefixer()]
 }

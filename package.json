@@ -40,5 +40,9 @@
   "dependencies": {
     "delegate": "^3.0.2",
     "xtend": "^4.0.1"
-  }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ]
 }
